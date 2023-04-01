@@ -10,8 +10,6 @@ nebo False, podle toho, zda řešení existuje nebo neexistuje.
 
 Podrobnější zadání včetně příkladu je jako obvykle na elearning.tul.cz
 """
-import math
-import time
 
 
 def load(file_path: str) -> tuple[tuple, ...]:
