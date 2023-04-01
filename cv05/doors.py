@@ -32,46 +32,22 @@ def solve(words: tuple[str]) -> tuple[int, bool]:
     """
     Determines if a chain can be constructed using recursion
     """
-    time_taken = []
-    for i, word in enumerate(words):
-        print(f'{i}/{len(words)}')
-        t1 = time.time_ns()
+    for word in words:
         _words = list(words)
         _words.remove(word)
         for _word in _words[:]:
             if word[-1] == _word[0]:
                 _words.remove(_word)
                 word = _word
-        t2 = time.time_ns()
-        took = (t2 - t1) / int(1e6)
-        time_taken.append(took)
-        print(f'took {math.floor(took)}ms')
-        print(f'estimated {math.floor(((sum(time_taken) / len(time_taken)) * (len(words) - i + 1)) / 60000)}min left')
         if len(_words) == 0:
             return len(words), True
 
     return len(words), False
 
 
-def solve_recursion(door):
-    def find_next_link(word: str, _words: list[str]):
-        if len(_words) == 0:
-            return True
-        for _word in _words:
-            if word[-1] == _word[0]:
-                _words.remove(_word)
-                return find_next_link(_word, _words)
-        return False
-
-    for door_word in door:
-        word_list = list(door)
-        word_list.remove(door_word)
-        if find_next_link(door_word, word_list):
-            return len(door), True
-    return len(door), False
-
-
 if __name__ == '__main__':
-    data = load('test_limit_positive.txt')
+    data = load('large.txt')
     for door in data:
-        print(solve(door))
+        with open('vysledky.txt', 'a', encoding='utf-8') as result_file:
+            result = solve(door)
+            result_file.write(f'{result[0]} {result[1]}\n')
