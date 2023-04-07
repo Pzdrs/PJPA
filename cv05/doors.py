@@ -10,6 +10,8 @@ nebo False, podle toho, zda řešení existuje nebo neexistuje.
 
 Podrobnější zadání včetně příkladu je jako obvykle na elearning.tul.cz
 """
+import math
+import time
 
 from enum import IntEnum
 
