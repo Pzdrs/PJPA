@@ -10,85 +10,42 @@ nebo False, podle toho, zda řešení existuje nebo neexistuje.
 
 Podrobnější zadání včetně příkladu je jako obvykle na elearning.tul.cz
 """
-import math
-import time
-
-from enum import IntEnum
 
 
-class Letters(IntEnum):
+def load(file_path: str) -> tuple[tuple, ...]:
     """
-    Přehlednější přístup k datové struktuře
+    Loads a file
     """
-    FIRST = 0
-    LAST = 1
-    PAIR = 2
+    with open(file_path, 'r', encoding='utf-8') as file:
+        doors = []
+        for _ in range(int(file.readline())):
+            words = []
+            for _ in range(int(file.readline())):
+                words.append(file.readline().strip())
+            doors.append(tuple(words))
+        return tuple(doors)
 
 
-def is_chain(words: list[str]) -> tuple[int, bool]:
+def solve(words: tuple[str]) -> tuple[int, bool]:
     """
-    Funkce řeší zdali zadaný list je possibly chain
+    Determines if a chain can be constructed using recursion
     """
-    # Počáteční písmena, koncový písmena, slova končící stejně
-    letters = [[Letters.FIRST] * 26 for _ in range(3)]
-
     for word in words:
-        first = ord(word[0]) - ord("a")
-        last = ord(word[-1]) - ord("a")
+        _words = list(words)
+        _words.remove(word)
+        for _word in _words[:]:
+            if word[-1] == _word[0]:
+                _words.remove(_word)
+                word = _word
+        if len(_words) == 0:
+            return len(words), True
 
-        letters[Letters.PAIR][first] += first == last
-        letters[Letters.FIRST][first] += 1
-        letters[Letters.LAST][last] += 1
-
-    # Návaznost sekvence
-    counter = [0, 0, 0]
-    letter_vector = {1: [1, 0, 0], -1: [0, 1, 0]}
-
-    is_chain_sequence = True
-    for first, last, pairs in zip(letters[Letters.FIRST], letters[Letters.LAST], letters[Letters.PAIR]):
-        if pairs != 0 and (first == last == pairs):
-            is_chain_sequence = False
-            break
-
-        letter = first - last
-        if letter != 0:
-            counter = [
-                x + y for x, y in
-                zip(counter, letter_vector.get(letter, [0, 0, 1]))
-            ]
-
-    if counter[Letters.FIRST] <= 1 and counter[Letters.LAST] <= 1 and counter[Letters.PAIR] == 0 and is_chain_sequence:
-        pass
-    else:
-        is_chain_sequence = False
-
-    return len(words), is_chain_sequence
-
-
-def solve(path: str) -> None:
-    """
-    Funkce ukládá výsledky o tom zdali dveře jsou chain sekvence
-    """
-
-    # Preprocessing
-    with open(f"./{path}", "r", encoding="utf8") as raw:
-        lines: list[str] = [line.rstrip('\n') for line in raw]
-        num_of_doors = int(lines.pop(0))
-
-    line_pointer = 0
-    with open("vysledky.txt", "w", encoding="utf8") as result:
-        for _ in range(num_of_doors):
-            num_of_words = int(lines.pop(line_pointer))
-
-            # Hlavní metoda
-            num_of_words, is_chain_sequence = is_chain(
-                lines[line_pointer:line_pointer + num_of_words])
-
-            result.write(f"{num_of_words} {is_chain_sequence}\n")
-
-            # Posun na další dveře
-            line_pointer += num_of_words
+    return len(words), False
 
 
 if __name__ == '__main__':
-    solve("large.txt")
+    data = load('large.txt')
+    for door in data:
+        with open('vysledky.txt', 'a', encoding='utf-8') as result_file:
+            result = solve(door)
+            result_file.write(f'{result[0]} {result[1]}\n')
