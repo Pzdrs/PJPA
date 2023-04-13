@@ -30,7 +30,7 @@ Podrobnější zadání včetně příkladu je jako obvykle na elearning.tul.cz
 import re
 
 REGEX_1 = re.compile(r'\b\w*[aeiyou]{2,}\w*\b', re.IGNORECASE)
-REGEX_2 = re.compile(r'\b(?:\w*[aeiyouAEIYOU]){3,}\w*\b', re.IGNORECASE)
+REGEX_2 = re.compile(r'\b(?:\w*[aeiyou]){3,}\w*\b', re.IGNORECASE)
 REGEX_3 = re.compile(r'\w{6,}', re.IGNORECASE)
 REGEX_4 = re.compile(r'\b(\w+)\b.*\b\1\b', re.IGNORECASE)
 
