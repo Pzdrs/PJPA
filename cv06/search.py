@@ -38,6 +38,9 @@ REGEXES = (REGEX_1, REGEX_2, REGEX_3, (REGEX_4, False))
 
 
 def main(file_name):
+    """
+    Main function of the program.
+    """
     with open(file_name, 'r', encoding='utf-8') as file:
         contents = file.read()
         for regex in REGEXES:
