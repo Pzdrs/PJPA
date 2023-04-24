@@ -11,41 +11,52 @@ nebo False, podle toho, zda řešení existuje nebo neexistuje.
 Podrobnější zadání včetně příkladu je jako obvykle na elearning.tul.cz
 """
 
-
-def load(file_path: str) -> tuple[tuple, ...]:
-    """
-    Loads a file
-    """
-    with open(file_path, 'r', encoding='utf-8') as file:
-        doors = []
-        for _ in range(int(file.readline())):
-            words = []
-            for _ in range(int(file.readline())):
-                words.append(file.readline().strip())
-            doors.append(tuple(words))
-        return tuple(doors)
+import os
 
 
-def solve(words: tuple[str]) -> tuple[int, bool]:
-    """
-    Determines if a chain can be constructed using recursion
-    """
+def get_word_degrees(words: list[str]) -> dict[str, tuple[int, int]]:
+    degrees = {}
     for word in words:
-        _words = list(words)
-        _words.remove(word)
-        for _word in _words[:]:
-            if word[-1] == _word[0]:
-                _words.remove(_word)
-                word = _word
-        if len(_words) == 0:
-            return len(words), True
+        safe_word = word.strip()
+        leading_letter = safe_word[0]
+        trailing_letter = safe_word[-1]
+        if leading_letter not in degrees:
+            degrees[leading_letter] = (0, 0)
+        if trailing_letter not in degrees:
+            degrees[trailing_letter] = (0, 0)
+        in_degree, out_degree = degrees[leading_letter]
+        degrees[leading_letter] = (in_degree, out_degree + 1)
+        in_degree, out_degree = degrees[trailing_letter]
+        degrees[trailing_letter] = (in_degree + 1, out_degree)
+    return degrees
 
-    return len(words), False
+
+def is_eulerian_path(degrees: dict[str, tuple[int, int]]) -> bool:
+    odd_degree_count = 0
+    for in_degree, out_degree in degrees.values():
+        if abs(in_degree - out_degree) == 1:
+            odd_degree_count += 1
+        elif in_degree != out_degree:
+            return False
+    return odd_degree_count <= 2
+
+
+def solve(file_path: str) -> list[str]:
+    if not os.path.isfile(file_path):
+        return []
+    door_data = []
+    with open(file_path, "r", encoding="utf-8") as file:
+        door_count = int(file.readline().strip())
+        for _ in range(door_count):
+            word_count = int(file.readline().strip())
+            words = [file.readline().strip() for _ in range(word_count)]
+            degrees = get_word_degrees(words)
+            door_data.append(f'{word_count} {is_eulerian_path(degrees)}')
+    return door_data
 
 
 if __name__ == '__main__':
-    data = load('large.txt')
-    for door in data:
-        with open('vysledky.txt', 'a', encoding='utf-8') as result_file:
-            result = solve(door)
-            result_file.write(f'{result[0]} {result[1]}\n')
+    door_data = solve("./large.txt")
+    with open("./vysledky.txt", "w", encoding="utf-8") as file:
+        for result in door_data:
+            file.write(f'{result}\n')
