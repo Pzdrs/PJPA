@@ -101,14 +101,14 @@ def build_final_results(processed_country_data: tuple[tuple, tuple]):
             lookup_result = lookup_result[0]
             to_return.append({
                 'id': lookup_result['id'],
-                'result': pos,
-                'time': original_data[1],
+                'result': original_data[0],
+                'time': original_data[2],
             })
         elif lookup_result_len == 0:
             to_return.append({
                 'id': False,
-                'result': pos,
-                'time': original_data[1],
+                'result': original_data[0],
+                'time': original_data[2],
                 'no_match': looked_up_for,
             })
         else:
