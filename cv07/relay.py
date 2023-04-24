@@ -22,7 +22,7 @@ def output_json(result_list):
     Uloží list slovníků do souboru output.json tak jak je požadováno
     v zadání.
     """
-    with open('output.json', 'w') as output:
+    with open('output.json', 'w', encoding='utf-8') as output:
         output.write(json.dumps(result_list, indent=4, sort_keys=True))
 
 
